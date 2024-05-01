@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// プレイヤー制御
+/// </summary>
 public class Player : MonoBehaviour
 {
     private PlayerInput _playerInput;
@@ -10,14 +13,10 @@ public class Player : MonoBehaviour
     [SerializeField] float jumpForce;
     Rigidbody rb;
 
-    bool isForward = false, isBack = false, isLeft = false, isRight = false, isJump = false;
-
     // 接地判定用
-    Ray ray;
-    float rayDis = 0.5f;
-    RaycastHit hit;
-    Vector3 rayPos;
     bool isGround = false;
+
+    [SerializeField] Gun gun;
 
     private void OnEnable()
     {
@@ -33,8 +32,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        LandCheck();
-        MoveInput();
+        Jump();
+        Fire();
     }
 
     private void FixedUpdate()
@@ -43,62 +42,72 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
-    /// 操作
-    /// </summary>
-    private void MoveInput()
-    {
-        // 前後左右移動
-        if (_playerInput.Move.Forward.IsPressed()) isForward = true;
-        else isForward = false;
-
-        if (_playerInput.Move.Back.IsPressed()) isBack = true;
-        else isBack = false;
-
-        if (_playerInput.Move.Left.IsPressed()) isLeft = true;
-        else isLeft = false;
-
-        if (_playerInput.Move.Right.IsPressed()) isRight = true;
-        else isRight = false;
-
-        // ジャンプ
-        if (_playerInput.Move.Jump.triggered && isGround) isJump = true;
-        if (!_playerInput.Move.Jump.IsPressed()) isJump = false;
-    }
-
-    /// <summary>
     /// 移動処理
     /// </summary>
     void Move()
     {
-        float currentSpeed = speed - rb.velocity.magnitude;
-
         // 前後左右移動
-        if (isForward) rb.AddForce(Vector3.forward * currentSpeed);
+        if (_playerInput.Move.Forward.IsPressed())
+        {
+            transform.Translate(Vector3.forward * speed * Time.deltaTime);
+        }
 
-        if (isBack) rb.AddForce(Vector3.back * currentSpeed);
+        if (_playerInput.Move.Back.IsPressed())
+        {
+            transform.Translate(Vector3.back * speed * Time.deltaTime);
+        }
 
-        if (isLeft) rb.AddForce(Vector3.left * currentSpeed);
+        if (_playerInput.Move.Left.IsPressed())
+        {
+            transform.Translate(Vector3.left * speed * Time.deltaTime);
+        }
 
-        if (isRight) rb.AddForce(Vector3.right * currentSpeed);
-
-        // ジャンプ
-        if (_playerInput.Move.Jump.triggered) rb.AddForce(Vector3.up * jumpForce);
+        if (_playerInput.Move.Right.IsPressed())
+        {
+            transform.Translate(Vector3.right * speed * Time.deltaTime);
+        }
     }
 
-    void LandCheck()
+    /// <summary>
+    /// ジャンプ
+    /// </summary>
+    void Jump()
     {
-        rayPos = transform.position + new Vector3(0, 0.5f, 0);
-        ray = new Ray(rayPos, transform.up * -1);
-        Debug.DrawRay(ray.origin, ray.direction * rayDis, Color.red);
-
-        if(Physics.Raycast(ray, out hit, rayDis))
+        if (_playerInput.Move.Jump.triggered && isGround)
         {
-            if(hit.collider.tag == "Ground")
-            {
-                isGround = true;
-            }
+            rb.AddForce(Vector3.up * jumpForce);
+        }
+    }
 
-            else isGround = false;
+    /// <summary>
+    /// 銃を撃つ
+    /// </summary>
+    void Fire()
+    {
+        if(_playerInput.Move.Fire.triggered)
+        {
+            gun.Fire();
+        }
+
+        if (_playerInput.Move.Reroad.triggered)
+        {
+            gun.Reroad();
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.CompareTag("Ground"))
+        {
+            isGround = true;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGround = false;
         }
     }
 }

@@ -71,6 +71,24 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Fire"",
+                    ""type"": ""Button"",
+                    ""id"": ""a0f057c1-375d-42f9-82f2-aa472e853951"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Reroad"",
+                    ""type"": ""Button"",
+                    ""id"": ""82bde01b-c6d5-4565-b209-fff5cb00d3a3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -216,6 +234,28 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Jump"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0cd5588b-271b-4242-9dab-1570158be55c"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Fire"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""be2346f7-0a85-4316-b9be-3ebcefef1a79"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Reroad"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -229,6 +269,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Move_Left = m_Move.FindAction("Left", throwIfNotFound: true);
         m_Move_Right = m_Move.FindAction("Right", throwIfNotFound: true);
         m_Move_Jump = m_Move.FindAction("Jump", throwIfNotFound: true);
+        m_Move_Fire = m_Move.FindAction("Fire", throwIfNotFound: true);
+        m_Move_Reroad = m_Move.FindAction("Reroad", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -295,6 +337,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Move_Left;
     private readonly InputAction m_Move_Right;
     private readonly InputAction m_Move_Jump;
+    private readonly InputAction m_Move_Fire;
+    private readonly InputAction m_Move_Reroad;
     public struct MoveActions
     {
         private @PlayerInput m_Wrapper;
@@ -304,6 +348,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Left => m_Wrapper.m_Move_Left;
         public InputAction @Right => m_Wrapper.m_Move_Right;
         public InputAction @Jump => m_Wrapper.m_Move_Jump;
+        public InputAction @Fire => m_Wrapper.m_Move_Fire;
+        public InputAction @Reroad => m_Wrapper.m_Move_Reroad;
         public InputActionMap Get() { return m_Wrapper.m_Move; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -328,6 +374,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Jump.started += instance.OnJump;
             @Jump.performed += instance.OnJump;
             @Jump.canceled += instance.OnJump;
+            @Fire.started += instance.OnFire;
+            @Fire.performed += instance.OnFire;
+            @Fire.canceled += instance.OnFire;
+            @Reroad.started += instance.OnReroad;
+            @Reroad.performed += instance.OnReroad;
+            @Reroad.canceled += instance.OnReroad;
         }
 
         private void UnregisterCallbacks(IMoveActions instance)
@@ -347,6 +399,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Jump.started -= instance.OnJump;
             @Jump.performed -= instance.OnJump;
             @Jump.canceled -= instance.OnJump;
+            @Fire.started -= instance.OnFire;
+            @Fire.performed -= instance.OnFire;
+            @Fire.canceled -= instance.OnFire;
+            @Reroad.started -= instance.OnReroad;
+            @Reroad.performed -= instance.OnReroad;
+            @Reroad.canceled -= instance.OnReroad;
         }
 
         public void RemoveCallbacks(IMoveActions instance)
@@ -371,5 +429,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnLeft(InputAction.CallbackContext context);
         void OnRight(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
+        void OnFire(InputAction.CallbackContext context);
+        void OnReroad(InputAction.CallbackContext context);
     }
 }
