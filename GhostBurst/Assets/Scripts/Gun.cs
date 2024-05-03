@@ -56,6 +56,8 @@ public class Gun : MonoBehaviour
 
     public void Reroad()
     {
+        if(needMagazineGet) return; // マガジンが無ければリロード不可
+
         needReroad = false;
 
         // 弾丸補充　マガジン消費

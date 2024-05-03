@@ -18,6 +18,11 @@ public class Player : MonoBehaviour
 
     [SerializeField] Gun gun;
 
+    [SerializeField] float maxHp;
+    public float maxHP { get { return maxHp; } }
+    float hp;
+    public float HP { get { return hp; } }
+
     private void OnEnable()
     {
         // InputAction‚Ì—LŒø‰»
@@ -28,6 +33,8 @@ public class Player : MonoBehaviour
     private void Start()
     {
         if(GetComponent<Rigidbody>() is var r) rb = r;
+
+        hp = maxHp;
     }
 
     void Update()
@@ -93,6 +100,11 @@ public class Player : MonoBehaviour
         {
             gun.Reroad();
         }
+    }
+
+    public void Damage(float damage)
+    {
+        hp -= damage;
     }
 
     private void OnCollisionEnter(Collision collision)
